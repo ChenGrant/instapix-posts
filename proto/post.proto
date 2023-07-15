@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+
+import "google/protobuf/empty.proto";
+
+
+service PostService {
+    rpc GeneratePosts(GeneratePostsRequest) returns (stream GeneratePostResponse) {};
+}
+
+
+message GeneratePostsRequest {
+    string uid = 1;
+    string prompt = 2;
+}
+
+
+message Post {
+    string photo_src = 1;
+}
+
+
+message GeneratePostResponse {
+    oneof response {
+        Post post = 1;
+        google.protobuf.Empty empty = 2;
+    }
+}
+
