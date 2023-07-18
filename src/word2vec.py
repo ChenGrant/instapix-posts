@@ -1,11 +1,14 @@
+import time
 from gensim.models import KeyedVectors
 import sklearn.metrics.pairwise as pairwise
 import numpy as np
 
-print("loading model")
 # load model
+print("loading model")
+start = time.process_time()
 model_path = "../model/GoogleNews-vectors-negative300.bin.gz"
 model = KeyedVectors.load_word2vec_format(model_path, binary=True, limit=None)
+print(f"loaded model in {time.process_time() - start} seconds")
 
 
 # get average embedding from word2vec embedding

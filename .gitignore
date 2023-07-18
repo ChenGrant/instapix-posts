@@ -1,5 +1,6 @@
 .posts_venv
 __pycache__
 .env.dev
-.env.dockerdev
+.env.prod
+deploy.sh
 GoogleNews-vectors-negative300.bin.gz
