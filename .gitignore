@@ -3,4 +3,3 @@ __pycache__
 .env.dev
 .env.prod
 deploy.sh
-GoogleNews-vectors-negative300.bin.gz

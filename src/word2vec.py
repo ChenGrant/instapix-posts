@@ -1,14 +1,11 @@
-import time
-from gensim.models import KeyedVectors
-import sklearn.metrics.pairwise as pairwise
+import sys
+import os
+import grpc
 import numpy as np
 
-# load model
-print("loading model")
-start = time.process_time()
-model_path = "../model/GoogleNews-vectors-negative300.bin.gz"
-model = KeyedVectors.load_word2vec_format(model_path, binary=True, limit=None)
-print(f"loaded model in {time.process_time() - start} seconds")
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../protos")))
+import word2vec_pb2_grpc
+import word2vec_pb2
 
 
 # get average embedding from word2vec embedding
@@ -18,11 +15,20 @@ def avg_embedding(embedding):
 
 # get word2vec embedding from a list of words
 def embed_words(words):
-    return [
-        model.get_vector(word).tolist() for word in words if word in model.key_to_index
-    ]
+    with grpc.insecure_channel(os.environ["WORD2VEC_SERVER_ADDRESS"]) as channel:
+        stub = word2vec_pb2_grpc.Word2VecServiceStub(channel)
+        response = stub.EmbedWords(word2vec_pb2.EmbedWordsRequest(words=words))
+        embeddings = [embedding.embedding for embedding in response.embeddings]
+        return embeddings
 
 
-# calculates the cosine similarity of two 'numpy.ndarry's
-def cosine_similarity(a, b):
-    return pairwise.cosine_similarity([a], [b])[0][0]
+# calculates the similarity of two word2vec embeddings
+def similarity(embeddings1, embeddings2):
+    with grpc.insecure_channel(os.environ["WORD2VEC_SERVER_ADDRESS"]) as channel:
+        stub = word2vec_pb2_grpc.Word2VecServiceStub(channel)
+        embeddings1 = [word2vec_pb2.Embedding(embedding=embedding) for embedding in embeddings1]
+        embeddings2 = [word2vec_pb2.Embedding(embedding=embedding) for embedding in embeddings2]
+        response = stub.Similarity(
+            word2vec_pb2.SimilarityRequest(embeddings1=embeddings1, embeddings2=embeddings2)
+        )
+        return response.similarity
