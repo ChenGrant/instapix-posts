@@ -1,16 +1,10 @@
 import sys
 import os
 import grpc
-import numpy as np
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../protos")))
 import word2vec_pb2_grpc
 import word2vec_pb2
-
-
-# get average embedding from word2vec embedding
-def avg_embedding(embedding):
-    return np.mean(embedding, axis=0)
 
 
 # get word2vec embedding from a list of words
