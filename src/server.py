@@ -5,7 +5,7 @@ import grpc
 from post_service import Post
 
 
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../proto")))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../protos")))
 import post_pb2_grpc
 
 
